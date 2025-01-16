@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package myapp;
+
+// ここでGoのインポートパスを指定しておく
+option go_package = "github.com/yourname/my-grpc-client/pb;pb";
+
+message Request {
+  string user_id = 1;
+}
+
+message Response {
+  string result = 1;
+}
+
+service MyService {
+  rpc DoSomething(Request) returns (Response);
+}

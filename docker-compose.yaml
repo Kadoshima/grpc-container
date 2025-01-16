@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  # ──────────────────────────
+  # 本番用(Production)コンテナ
+  # ──────────────────────────
+  grpc-client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    stdin_open: true
+    tty: true
+    networks:
+      - comfyui-network
+    platform: linux/amd64
+
+  grpc-server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+      target: production
+    ports:
+      - "50051:50051"
+    environment:
+      - NODE_ENV=production
+    stdin_open: true
+    tty: true
+    networks:
+      - comfyui-network
+    platform: linux/amd64
+
+  # ──────────────────────────
+  # 開発用(Development)コンテナ
+  # ──────────────────────────
+  grpc-client-dev:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+    networks:
+      - comfyui-network
+    depends_on:
+      - grpc-server
+
+  grpc-server-dev:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+      target: development
+    ports:
+      - "50052:50051"
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+    networks:
+      - comfyui-network
+
+networks:
+  comfyui-network:
+    external: true
